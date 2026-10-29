@@ -3,6 +3,7 @@ Test cases for Account Model
 
 """
 import logging
+from datetime import date
 import unittest
 import os
 from service import app
@@ -175,3 +176,10 @@ class TestAccount(unittest.TestCase):
         """It should not Deserialize an account with a TypeError"""
         account = Account()
         self.assertRaises(DataValidationError, account.deserialize, [])
+
+    def test_deserialize_defaults_joined_date_to_today(self):
+        """It should default to today's date when date_joined is omitted."""
+        account_data = AccountFactory().serialize()
+        account_data.pop("date_joined")
+        account = Account().deserialize(account_data)
+        self.assertEqual(account.date_joined, date.today())
